@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaStudio - Transform Your Business with Our SaaS Solution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Marketing Navigation -->
+    <nav class="navbar marketing-nav">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <h2>SaaStudio</h2>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#" data-page="home" class="nav-link active">Home</a>
+                    <a href="#" data-page="pricing" class="nav-link">Pricing</a>
+                    <a href="#" data-page="about" class="nav-link">About</a>
+                    <a href="#" data-page="reviews" class="nav-link">Reviews</a>
+                    <a href="#" data-page="contact" class="nav-link">Contact</a>
+                </div>
+
+                <div class="nav-actions">
+                    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <button type="button" class="btn btn--outline" id="loginBtn">Login</button>
+                    <button type="button" class="btn btn--primary" id="signupBtn">Sign Up</button>
+                </div>
+
+                <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Navigation -->
+    <nav class="navbar dashboard-nav hidden">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <h2>SaaStudio</h2>
+                </div>
+                
+                <div class="nav-user">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-count" id="notificationCount">3</span>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar">JD</div>
+                        <div class="user-dropdown hidden" id="userDropdown">
+                            <div class="user-info">
+                                <div class="user-name" id="userName">John Doe</div>
+                                <div class="user-email" id="userEmail">john@example.com</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" data-page="settings" class="dropdown-item">Settings</a>
+                            <a href="#" id="logoutBtn" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Sidebar -->
+    <aside class="dashboard-sidebar hidden" id="dashboardSidebar">
+        <div class="sidebar-content">
+            <nav class="sidebar-nav">
+                <a href="#" data-page="dashboard" class="sidebar-link active">
+                    <span class="sidebar-icon">📊</span>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="#" data-page="analytics" class="sidebar-link">
+                    <span class="sidebar-icon">📈</span>
+                    <span class="sidebar-text">Analytics</span>
+                </a>
+                <a href="#" data-page="users" class="sidebar-link">
+                    <span class="sidebar-icon">👥</span>
+                    <span class="sidebar-text">Users</span>
+                </a>
+                <a href="#" data-page="settings" class="sidebar-link">
+                    <span class="sidebar-icon">⚙️</span>
+                    <span class="sidebar-text">Settings</span>
+                </a>
+                <a href="#" data-page="billing" class="sidebar-link">
+                    <span class="sidebar-icon">💳</span>
+                    <span class="sidebar-text">Billing</span>
+                </a>
+                <a href="#" data-page="reports" class="sidebar-link">
+                    <span class="sidebar-icon">📋</span>
+                    <span class="sidebar-text">Reports</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu hidden" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="#" data-page="home" class="mobile-menu-link">Home</a>
+            <a href="#" data-page="pricing" class="mobile-menu-link">Pricing</a>
+            <a href="#" data-page="about" class="mobile-menu-link">About</a>
+            <a href="#" data-page="reviews" class="mobile-menu-link">Reviews</a>
+            <a href="#" data-page="contact" class="mobile-menu-link">Contact</a>
+            <div class="mobile-menu-actions">
+                <button type="button" class="btn btn--outline btn--full-width" id="mobileLoginBtn">Login</button>
+                <button type="button" class="btn btn--primary btn--full-width" id="mobileSignupBtn">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Home Page -->
+        <div class="page active" id="homePage">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-3d" id="hero3d"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Transform Your Business with Our SaaS Solution</h1>
+                        <p class="hero-subtitle">Streamline workflows, boost productivity, and scale effortlessly</p>
+                        <button type="button" class="btn btn--primary btn--lg hero-cta">Start Free Trial</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features">
+                <div class="container">
+                    <h2 class="section-title">Powerful Features for Modern Teams</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Advanced Analytics</h3>
+                            <p>Get deep insights into your business performance with real-time analytics and reporting.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">👥</div>
+                            <h3>Team Collaboration</h3>
+                            <p>Work seamlessly with your team using our built-in collaboration tools.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔗</div>
+                            <h3>API Integration</h3>
+                            <p>Connect with your favorite tools and services through our robust API.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📱</div>
+                            <h3>Mobile Access</h3>
+                            <p>Stay productive on the go with our native mobile applications.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔒</div>
+                            <h3>Security First</h3>
+                            <p>Enterprise-grade security with SOC 2 compliance and data encryption.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🎧</div>
+                            <h3>24/7 Support</h3>
+                            <p>Get help when you need it with our round-the-clock customer support.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trusted By Section -->
+            <section class="trusted-by">
+                <div class="container">
+                    <h3 class="trusted-title">Trusted by industry leaders</h3>
+                    <div class="trusted-logos">
+                        <div class="logo-item">Microsoft</div>
+                        <div class="logo-item">Google</div>
+                        <div class="logo-item">Amazon</div>
+                        <div class="logo-item">Spotify</div>
+                        <div class="logo-item">Slack</div>
+                        <div class="logo-item">Dropbox</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Reviews Section -->
+            <section class="customer-reviews">
+                <div class="container">
+                    <h2 class="section-title">What our customers say</h2>
+                    <div class="reviews-grid">
+                        <div class="review-card">
+                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <p class="review-text">"Amazing platform that transformed our workflow!"</p>
+                            <div class="review-author">
+                                <div class="author-avatar">👨‍💻</div>
+                                <div class="author-info">
+                                    <div class="author-name">David Wilson</div>
+                                    <div class="author-company">Tech Startup</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <p class="review-text">"Intuitive interface and excellent customer support."</p>
+                            <div class="review-author">
+                                <div class="author-avatar">👩‍💼</div>
+                                <div class="author-info">
+                                    <div class="author-name">Lisa Thompson</div>
+                                    <div class="author-company">Marketing Agency</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-rating">⭐⭐⭐⭐</div>
+                            <p class="review-text">"The analytics features are incredibly detailed and useful."</p>
+                            <div class="review-author">
+                                <div class="author-avatar">👨‍💼</div>
+                                <div class="author-info">
+                                    <div class="author-name">James Park</div>
+                                    <div class="author-company">E-commerce</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Dashboard Home -->
+        <div class="page hidden dashboard-page" id="dashboardPage">
+            <div class="dashboard-header">
+                <div class="container">
+                    <h1 class="dashboard-title">Dashboard Overview</h1>
+                    <p class="dashboard-subtitle">Welcome back! Here's what's happening with your business today.</p>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="container">
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">👥</div>
+                            <div class="kpi-content">
+                                <h3 class="kpi-value" id="kpiUsers">2,650</h3>
+                                <p class="kpi-label">Total Users</p>
+                                <div class="kpi-trend positive">
+                                    <span>+12.5%</span>
+                                    <span class="trend-label">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">💰</div>
+                            <div class="kpi-content">
+                                <h3 class="kpi-value" id="kpiRevenue">₹95,000</h3>
+                                <p class="kpi-label">Monthly Revenue</p>
+                                <div class="kpi-trend positive">
+                                    <span>+8.2%</span>
+                                    <span class="trend-label">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">📈</div>
+                            <div class="kpi-content">
+                                <h3 class="kpi-value" id="kpiConversion">3.2%</h3>
+                                <p class="kpi-label">Conversion Rate</p>
+                                <div class="kpi-trend positive">
+                                    <span>+0.8%</span>
+                                    <span class="trend-label">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">📉</div>
+                            <div class="kpi-content">
+                                <h3 class="kpi-value" id="kpiChurn">2.1%</h3>
+                                <p class="kpi-label">Churn Rate</p>
+                                <div class="kpi-trend negative">
+                                    <span>-0.3%</span>
+                                    <span class="trend-label">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Revenue Trend</h3>
+                                <div class="chart-actions">
+                                    <select class="form-control chart-select">
+                                        <option>Last 12 months</option>
+                                        <option>Last 6 months</option>
+                                        <option>Last 3 months</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-content" style="position: relative; height: 300px;">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>User Growth</h3>
+                                <div class="chart-actions">
+                                    <button type="button" class="btn btn--sm btn--outline">Export</button>
+                                </div>
+                            </div>
+                            <div class="chart-content" style="position: relative; height: 300px;">
+                                <canvas id="userGrowthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Feed and Quick Actions -->
+                    <div class="dashboard-bottom">
+                        <div class="activity-feed">
+                            <h3>Recent Activity</h3>
+                            <div class="activity-list" id="activityList">
+                                <div class="activity-item">
+                                    <div class="activity-icon">👤</div>
+                                    <div class="activity-content">
+                                        <p>New user registered: sarah@example.com</p>
+                                        <span class="activity-time">2 minutes ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">💳</div>
+                                    <div class="activity-content">
+                                        <p>Payment received: ₹899 (Pro Plan)</p>
+                                        <span class="activity-time">5 minutes ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">📊</div>
+                                    <div class="activity-content">
+                                        <p>Monthly report generated</p>
+                                        <span class="activity-time">1 hour ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quick-actions">
+                            <h3>Quick Actions</h3>
+                            <div class="action-buttons">
+                                <button type="button" class="btn btn--primary btn--full-width" data-page="users">Add New User</button>
+                                <button type="button" class="btn btn--outline btn--full-width" data-page="reports">Generate Report</button>
+                                <button type="button" class="btn btn--outline btn--full-width" data-page="settings">Update Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div class="page hidden dashboard-page" id="analyticsPage">
+            <div class="dashboard-header">
+                <div class="container">
+                    <h1 class="dashboard-title">Analytics</h1>
+                    <p class="dashboard-subtitle">Detailed insights into your business performance</p>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="container">
+                    <div class="analytics-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Monthly Revenue</h3>
+                            </div>
+                            <div class="chart-content" style="position: relative; height: 350px;">
+                                <canvas id="monthlyRevenueChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>User Engagement</h3>
+                            </div>
+                            <div class="chart-content" style="position: relative; height: 350px;">
+                                <canvas id="engagementChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Page -->
+        <div class="page hidden dashboard-page" id="usersPage">
+            <div class="dashboard-header">
+                <div class="container">
+                    <div class="header-actions">
+                        <div>
+                            <h1 class="dashboard-title">User Management</h1>
+                            <p class="dashboard-subtitle">Manage your users and their permissions</p>
+                        </div>
+                        <button type="button" class="btn btn--primary" id="addUserBtn">Add New User</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="container">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="table-search">
+                                <input type="search" class="form-control" placeholder="Search users..." id="userSearch">
+                            </div>
+                            <div class="table-filters">
+                                <select class="form-control" id="roleFilter">
+                                    <option value="">All Roles</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="User">User</option>
+                                </select>
+                                <select class="form-control" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="data-table">
+                            <table id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Join Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- User rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-pagination" id="usersPagination">
+                            <span class="pagination-info">Showing 1-3 of 3 users</span>
+                            <div class="pagination-controls">
+                                <button type="button" class="btn btn--sm btn--outline" disabled>Previous</button>
+                                <button type="button" class="btn btn--sm btn--outline" disabled>Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page hidden dashboard-page" id="settingsPage">
+            <div class="dashboard-header">
+                <div class="container">
+                    <h1 class="dashboard-title">Settings</h1>
+                    <p class="dashboard-subtitle">Manage your account and application settings</p>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="container">
+                    <div class="settings-grid">
+                        <div class="settings-section">
+                            <div class="card">
+                                <div class="card__header">
+                                    <h3>Profile Settings</h3>
+                                </div>
+                                <div class="card__body">
+                                    <form class="settings-form">
+                                        <div class="form-group">
+                                            <label class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" value="John Doe">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" value="john@example.com">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Phone</label>
+                                            <input type="tel" class="form-control" placeholder="+91 98765 43210">
+                                        </div>
+                                        <button type="submit" class="btn btn--primary">Save Changes</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="card">
+                                <div class="card__header">
+                                    <h3>Preferences</h3>
+                                </div>
+                                <div class="card__body">
+                                    <div class="preference-item">
+                                        <div class="preference-content">
+                                            <h4>Dark Mode</h4>
+                                            <p>Switch between light and dark themes</p>
+                                        </div>
+                                        <button type="button" class="toggle-switch" id="settingsThemeToggle">
+                                            <span class="toggle-slider"></span>
+                                        </button>
+                                    </div>
+                                    <div class="preference-item">
+                                        <div class="preference-content">
+                                            <h4>Email Notifications</h4>
+                                            <p>Receive notifications via email</p>
+                                        </div>
+                                        <button type="button" class="toggle-switch active">
+                                            <span class="toggle-slider"></span>
+                                        </button>
+                                    </div>
+                                    <div class="preference-item">
+                                        <div class="preference-content">
+                                            <h4>Marketing Updates</h4>
+                                            <p>Receive product updates and news</p>
+                                        </div>
+                                        <button type="button" class="toggle-switch">
+                                            <span class="toggle-slider"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Page -->
+        <div class="page hidden" id="pricingPage">
+            <section class="pricing-hero">
+                <div class="container">
+                    <h1 class="page-title">Choose Your Plan</h1>
+                    <p class="page-subtitle">Select the perfect plan for your business needs</p>
+                </div>
+            </section>
+
+            <section class="pricing-plans">
+                <div class="container">
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <div class="plan-header">
+                                <h3 class="plan-name">Basic</h3>
+                                <p class="plan-description">Perfect for startups</p>
+                                <div class="plan-price">
+                                    <span class="currency">₹</span>
+                                    <span class="amount">399</span>
+                                    <span class="period">/month</span>
+                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <div class="feature-item">✓ Up to 5 users</div>
+                                <div class="feature-item">✓ 10GB storage</div>
+                                <div class="feature-item">✓ Email support</div>
+                                <div class="feature-item">✓ Basic analytics</div>
+                            </div>
+                            <button type="button" class="btn btn--outline btn--full-width plan-btn">Choose Basic</button>
+                        </div>
+
+                        <div class="pricing-card popular">
+                            <div class="popular-badge">Most Popular</div>
+                            <div class="plan-header">
+                                <h3 class="plan-name">Pro</h3>
+                                <p class="plan-description">Best for growing teams</p>
+                                <div class="plan-price">
+                                    <span class="currency">₹</span>
+                                    <span class="amount">899</span>
+                                    <span class="period">/month</span>
+                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <div class="feature-item">✓ Up to 25 users</div>
+                                <div class="feature-item">✓ 100GB storage</div>
+                                <div class="feature-item">✓ Priority support</div>
+                                <div class="feature-item">✓ Advanced analytics</div>
+                                <div class="feature-item">✓ Custom reports</div>
+                            </div>
+                            <button type="button" class="btn btn--primary btn--full-width plan-btn">Choose Pro</button>
+                        </div>
+
+                        <div class="pricing-card">
+                            <div class="plan-header">
+                                <h3 class="plan-name">Enterprise</h3>
+                                <p class="plan-description">For large organizations</p>
+                                <div class="plan-price">
+                                    <span class="currency">₹</span>
+                                    <span class="amount">1999</span>
+                                    <span class="period">/month</span>
+                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <div class="feature-item">✓ Unlimited users</div>
+                                <div class="feature-item">✓ 1TB storage</div>
+                                <div class="feature-item">✓ 24/7 phone support</div>
+                                <div class="feature-item">✓ Advanced analytics</div>
+                                <div class="feature-item">✓ Custom integrations</div>
+                                <div class="feature-item">✓ Dedicated manager</div>
+                            </div>
+                            <button type="button" class="btn btn--outline btn--full-width plan-btn">Choose Enterprise</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- About Page -->
+        <div class="page hidden" id="aboutPage">
+            <section class="about-hero">
+                <div class="container">
+                    <h1 class="page-title">About SaaStudio</h1>
+                    <p class="page-subtitle">We're on a mission to transform how businesses operate</p>
+                </div>
+            </section>
+
+            <section class="about-content">
+                <div class="container">
+                    <div class="about-text">
+                        <h2>Our Mission</h2>
+                        <p>At SaaStudio, we believe that every business deserves access to powerful, intuitive tools that drive growth and efficiency. Our mission is to democratize enterprise-grade software solutions.</p>
+                        
+                        <h2>Our Team</h2>
+                        <div class="team-grid">
+                            <div class="team-card">
+                                <div class="team-avatar">👨‍💼</div>
+                                <h3 class="team-name">Alex Johnson</h3>
+                                <p class="team-role">CEO & Founder</p>
+                                <p class="team-bio">Visionary leader with 15+ years in SaaS</p>
+                            </div>
+                            <div class="team-card">
+                                <div class="team-avatar">👩‍💻</div>
+                                <h3 class="team-name">Sarah Chen</h3>
+                                <p class="team-role">CTO</p>
+                                <p class="team-bio">Tech expert specializing in scalable architectures</p>
+                            </div>
+                            <div class="team-card">
+                                <div class="team-avatar">👨‍🎨</div>
+                                <h3 class="team-name">Mike Rodriguez</h3>
+                                <p class="team-role">Head of Design</p>
+                                <p class="team-bio">UX/UI designer focused on user-centered design</p>
+                            </div>
+                            <div class="team-card">
+                                <div class="team-avatar">👩‍💼</div>
+                                <h3 class="team-name">Emily Davis</h3>
+                                <p class="team-role">VP of Sales</p>
+                                <p class="team-bio">Sales strategist driving growth and partnerships</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Reviews Page -->
+        <div class="page hidden" id="reviewsPage">
+            <section class="reviews-hero">
+                <div class="container">
+                    <h1 class="page-title">Customer Reviews</h1>
+                    <p class="page-subtitle">See what our customers are saying about SaaStudio</p>
+                </div>
+            </section>
+
+            <section class="reviews-content">
+                <div class="container">
+                    <div class="reviews-grid">
+                        <div class="review-card">
+                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <p class="review-text">"Game-changer for our startup. The ease of use and powerful features helped us scale quickly."</p>
+                            <div class="review-author">
+                                <div class="author-avatar">👨‍💻</div>
+                                <div class="author-info">
+                                    <div class="author-name">David Wilson</div>
+                                    <div class="author-company">Tech Startup</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <p class="review-text">"Intuitive interface and excellent customer support. Our team loves using it."</p>
+                            <div class="review-author">
+                                <div class="author-avatar">👩‍💼</div>
+                                <div class="author-info">
+                                    <div class="author-name">Lisa Thompson</div>
+                                    <div class="author-company">Marketing Agency</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-rating">⭐⭐⭐⭐</div>
+                            <p class="review-text">"The analytics features are incredibly detailed and useful for decision making."</p>
+                            <div class="review-author">
+                                <div class="author-avatar">👨‍💼</div>
+                                <div class="author-info">
+                                    <div class="author-name">James Park</div>
+                                    <div class="author-company">E-commerce</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Contact Page -->
+        <div class="page hidden" id="contactPage">
+            <section class="contact-hero">
+                <div class="container">
+                    <h1 class="page-title">Contact Us</h1>
+                    <p class="page-subtitle">Get in touch with our team</p>
+                </div>
+            </section>
+
+            <section class="contact-content">
+                <div class="container">
+                    <div class="contact-grid">
+                        <div class="contact-form-section">
+                            <h2>Send us a message</h2>
+                            <form class="contact-form" id="contactForm">
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Subject</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Message</label>
+                                    <textarea class="form-control" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn--primary btn--full-width">Send Message</button>
+                            </form>
+                        </div>
+
+                        <div class="contact-info-section">
+                            <h2>Get in touch</h2>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <div class="contact-icon">📧</div>
+                                    <div class="contact-details">
+                                        <h4>Email</h4>
+                                        <p>support@saastudio.com</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <div class="contact-icon">📞</div>
+                                    <div class="contact-details">
+                                        <h4>Phone</h4>
+                                        <p>+91 98765 43210</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <div class="contact-icon">📍</div>
+                                    <div class="contact-details">
+                                        <h4>Office</h4>
+                                        <p>123 Tech Park, Bangalore, India</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Login Modal -->
+        <div class="modal hidden" id="loginModal">
+            <div class="modal-backdrop">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Welcome Back</h2>
+                        <button type="button" class="modal-close" id="loginModalClose">&times;</button>
+                    </div>
+                    <form class="auth-form" id="loginForm">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="password-input">
+                                <input type="password" class="form-control" required>
+                                <button type="button" class="password-toggle">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox"> Remember me
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full-width">Login</button>
+                        <p class="auth-link">Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div class="modal hidden" id="signupModal">
+            <div class="modal-backdrop">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Create Account</h2>
+                        <button type="button" class="modal-close" id="signupModalClose">&times;</button>
+                    </div>
+                    <form class="auth-form" id="signupForm">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="password-input">
+                                <input type="password" class="form-control" required>
+                                <button type="button" class="password-toggle">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="password-input">
+                                <input type="password" class="form-control" required>
+                                <button type="button" class="password-toggle">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" required> I agree to the Terms of Service
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full-width">Create Account</button>
+                        <p class="auth-link">Already have an account? <a href="#" id="showLogin">Login</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add User Modal -->
+        <div class="modal hidden" id="addUserModal">
+            <div class="modal-backdrop">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Add New User</h2>
+                        <button type="button" class="modal-close" id="addUserModalClose">&times;</button>
+                    </div>
+                    <form class="auth-form" id="addUserForm">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Role</label>
+                            <select class="form-control" required>
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
+                                <option value="User">User</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-control" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full-width">Add User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Dropdown -->
+        <div class="notifications-dropdown hidden" id="notificationsDropdown">
+            <div class="notifications-header">
+                <h3>Notifications</h3>
+                <button type="button" class="btn btn--sm btn--outline">Mark all read</button>
+            </div>
+            <div class="notifications-list" id="notificationsList">
+                <div class="notification-item">
+                    <div class="notification-icon">ℹ️</div>
+                    <div class="notification-content">
+                        <p>New user registered</p>
+                        <span class="notification-time">2 min ago</span>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon">✅</div>
+                    <div class="notification-content">
+                        <p>Payment received from Pro plan</p>
+                        <span class="notification-time">5 min ago</span>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <div class="notification-icon">⚠️</div>
+                    <div class="notification-content">
+                        <p>Server maintenance scheduled</p>
+                        <span class="notification-time">1 hour ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SaaStudio</h3>
+                    <p>Transform your business with our powerful SaaS solution.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <div class="footer-links">
+                        <a href="#" data-page="pricing">Pricing</a>
+                        <a href="#" data-page="about">About</a>
+                        <a href="#" data-page="contact">Contact</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <div class="footer-links">
+                        <a href="#" target="_blank">Privacy Policy</a>
+                        <a href="#" target="_blank">Terms of Service</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" class="form-control" placeholder="Enter your email" required>
+                        <button type="submit" class="btn btn--primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SaaStudio. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" target="_blank">Twitter</a>
+                    <a href="#" target="_blank">LinkedIn</a>
+                    <a href="#" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
