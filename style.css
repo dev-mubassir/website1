@@ -3291,6 +3291,10 @@ body.sidebar-open .dashboard-sidebar {
     display: none;
   }
 
+  .nav-actions {
+    margin-left: auto;
+  }
+
   .mobile-menu-toggle {
     display: flex;
   }
