@@ -44,7 +44,7 @@ const debounce = (func, wait) => {
 };
 
 const formatCurrency = (amount) => {
-  return new Intl.NumberFormatv('en-IN', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     minimumFractionDigits: 0
@@ -61,14 +61,22 @@ const formatDate = (dateString) => {
 
 // Enhanced error handling
 const safeExecute = (fn, errorMsg = 'Operation failed') => {
-  try {
-    return fn();
-  } catch (error) {
+  const handleError = (error) => {
     console.error(errorMsg, error);
     if (window.NotificationManager) {
       NotificationManager.showError(errorMsg);
     }
     return null;
+  };
+
+  try {
+    const result = fn();
+    if (result && typeof result.catch === 'function') {
+      return result.catch(handleError);
+    }
+    return result;
+  } catch (error) {
+    return handleError(error);
   }
 };
 
@@ -76,8 +84,9 @@ const safeExecute = (fn, errorMsg = 'Operation failed') => {
 const ThemeManager = {
   init() {
     safeExecute(() => {
-      const savedTheme = localStorage.getItem('saastudio_theme') || 'light';
-      this.setTheme(savedTheme);
+      const savedTheme = localStorage.getItem('saastudio_theme');
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      this.setTheme(savedTheme || systemTheme);
       this.bindEvents();
       console.log('✓ Theme Manager initialized');
     }, 'Theme Manager initialization failed');
@@ -92,16 +101,30 @@ const ThemeManager = {
       } catch (e) {
         console.warn('Unable to save theme to localStorage:', e);
       }
+
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) {
+        themeMeta.setAttribute('content', theme === 'dark' ? '#070a13' : '#f6f7fb');
+      }
+
       this.updateThemeIcon();
       this.updateSettingsToggle();
+
+      if (window.ChartManager) {
+        ChartManager.refresh();
+      }
     }, 'Theme setting failed');
   },
 
   updateThemeIcon() {
     safeExecute(() => {
       const themeIcon = $('.theme-icon');
+      const themeToggle = $('#themeToggle');
       if (themeIcon) {
         themeIcon.textContent = AppState.theme === 'dark' ? '☀️' : '🌙';
+      }
+      if (themeToggle) {
+        themeToggle.setAttribute('aria-pressed', AppState.theme === 'dark' ? 'true' : 'false');
       }
     });
   },
@@ -110,7 +133,9 @@ const ThemeManager = {
     safeExecute(() => {
       const settingsToggle = $('#settingsThemeToggle');
       if (settingsToggle) {
-        settingsToggle.classList.toggle('active', AppState.theme === 'dark');
+        const isDark = AppState.theme === 'dark';
+        settingsToggle.classList.toggle('active', isDark);
+        settingsToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
       }
     });
   },
@@ -121,18 +146,15 @@ const ThemeManager = {
   },
 
   bindEvents() {
-    // Theme toggle in header
     const themeToggle = $('#themeToggle');
     if (themeToggle) {
       themeToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.toggle();
-        console.log('Theme toggled to:', AppState.theme);
       });
     }
 
-    // Settings theme toggle
     const settingsThemeToggle = $('#settingsThemeToggle');
     if (settingsThemeToggle) {
       settingsThemeToggle.addEventListener('click', (e) => {
@@ -327,9 +349,23 @@ const Hero3D = {
 
 // Chart Management System - Fixed
 const ChartManager = {
-  colors: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F', '#DB4545', '#D2BA4C', '#964325', '#944454', '#13343B'],
+  colors: ['#635bff', '#22d3ee', '#f43f5e', '#f59e0b', '#10b981', '#a855f7', '#38bdf8'],
+
+  getThemeColors() {
+    const styles = getComputedStyle(document.documentElement);
+    return {
+      text: styles.getPropertyValue('--text-2').trim() || '#4b536a',
+      grid: styles.getPropertyValue('--border').trim() || 'rgba(15, 23, 42, 0.09)'
+    };
+  },
 
   init() {
+    this.initializeCharts();
+  },
+
+  refresh() {
+    if (!window.Chart) return;
+    this.destroyCharts();
     this.initializeCharts();
   },
 
@@ -368,6 +404,7 @@ const ChartManager = {
     if (!canvas || !window.Chart) return;
 
     const ctx = canvas.getContext('2d');
+    const themed = this.getThemeColors();
     
     if (AppState.charts.revenue) {
       AppState.charts.revenue.destroy();
@@ -382,6 +419,8 @@ const ChartManager = {
           data: AppData.analyticsData.revenue,
           borderColor: this.colors[0],
           backgroundColor: this.colors[0] + '20',
+          pointBackgroundColor: this.colors[0],
+          pointBorderColor: this.colors[0],
           fill: true,
           tension: 0.4
         }]
@@ -397,11 +436,17 @@ const ChartManager = {
         scales: {
           y: {
             beginAtZero: true,
+            grid: { color: themed.grid },
             ticks: {
+              color: themed.text,
               callback: function(value) {
                 return '₹' + (value / 1000) + 'k';
               }
             }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: themed.text }
           }
         }
       }
@@ -413,6 +458,7 @@ const ChartManager = {
     if (!canvas || !window.Chart) return;
 
     const ctx = canvas.getContext('2d');
+    const themed = this.getThemeColors();
 
     if (AppState.charts.userGrowth) {
       AppState.charts.userGrowth.destroy();
@@ -425,9 +471,11 @@ const ChartManager = {
         datasets: [{
           label: 'Users',
           data: AppData.analyticsData.users,
-          backgroundColor: this.colors[1],
+          backgroundColor: this.colors[1] + 'cc',
           borderColor: this.colors[1],
-          borderWidth: 1
+          borderWidth: 1,
+          borderRadius: 6,
+          maxBarThickness: 24
         }]
       },
       options: {
@@ -440,7 +488,13 @@ const ChartManager = {
         },
         scales: {
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            grid: { color: themed.grid },
+            ticks: { color: themed.text }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: themed.text }
           }
         }
       }
@@ -452,6 +506,7 @@ const ChartManager = {
     if (!canvas || !window.Chart) return;
 
     const ctx = canvas.getContext('2d');
+    const themed = this.getThemeColors();
 
     if (AppState.charts.monthlyRevenue) {
       AppState.charts.monthlyRevenue.destroy();
@@ -466,6 +521,7 @@ const ChartManager = {
           data: AppData.analyticsData.revenue,
           borderColor: this.colors[0],
           backgroundColor: this.colors[0] + '20',
+          pointBackgroundColor: this.colors[0],
           fill: true,
           tension: 0.4
         }]
@@ -475,17 +531,24 @@ const ChartManager = {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true
+            display: true,
+            labels: { color: themed.text, usePointStyle: true, boxWidth: 8 }
           }
         },
         scales: {
           y: {
             beginAtZero: true,
+            grid: { color: themed.grid },
             ticks: {
+              color: themed.text,
               callback: function(value) {
                 return '₹' + (value / 1000) + 'k';
               }
             }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: themed.text }
           }
         }
       }
@@ -497,6 +560,7 @@ const ChartManager = {
     if (!canvas || !window.Chart) return;
 
     const ctx = canvas.getContext('2d');
+    const themed = this.getThemeColors();
 
     if (AppState.charts.engagement) {
       AppState.charts.engagement.destroy();
@@ -508,17 +572,21 @@ const ChartManager = {
         labels: ['New Users', 'Returning Users', 'Inactive Users'],
         datasets: [{
           data: [AppData.analyticsData.engagement.new, AppData.analyticsData.engagement.returning, AppData.analyticsData.engagement.inactive],
-          backgroundColor: [this.colors[2], this.colors[3], this.colors[4]],
+          backgroundColor: [this.colors[0], this.colors[1], this.colors[2]],
+          borderColor: 'transparent',
+          hoverOffset: 4,
           borderWidth: 2
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '68%',
         plugins: {
           legend: {
             display: true,
-            position: 'bottom'
+            position: 'bottom',
+            labels: { color: themed.text, usePointStyle: true, boxWidth: 8, padding: 16 }
           }
         }
       }
@@ -597,9 +665,10 @@ const PageNavigator = {
       // Handle page-specific initialization
       this.handlePageInit(pageId);
 
-      // Close mobile menu if open
+      // Close mobile navigation surfaces if open
       if (window.MobileMenu) {
         MobileMenu.close();
+        MobileMenu.closeDashboardSidebar();
       }
 
       // Scroll to top
@@ -766,7 +835,7 @@ const UserManager = {
         <tr>
           <td>
             <div class="user-cell">
-              <div class="user-cell-avatar" style="width: 32px; height: 32px; background: var(--color-primary); color: var(--color-btn-primary-text); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-weight: var(--font-weight-semibold); font-size: var(--font-size-xs);">
+              <div class="user-cell-avatar">
                 ${user.avatar}
               </div>
               <div class="user-cell-info">
@@ -891,7 +960,7 @@ const UserManager = {
         <tr>
           <td>
             <div class="user-cell">
-              <div class="user-cell-avatar" style="width: 32px; height: 32px; background: var(--color-primary); color: var(--color-btn-primary-text); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-weight: var(--font-weight-semibold); font-size: var(--font-size-xs);">
+              <div class="user-cell-avatar">
                 ${user.avatar}
               </div>
               <div class="user-cell-info">
@@ -921,44 +990,93 @@ const UserManager = {
   }
 };
 
-// Mobile Menu Management - Fixed
+// Mobile Menu Management
 const MobileMenu = {
   isOpen: false,
+  isSidebarOpen: false,
 
   init() {
     safeExecute(() => {
       this.bindEvents();
+      this.syncSidebarA11y();
       console.log('✓ Mobile Menu initialized');
     }, 'Mobile Menu initialization failed');
   },
 
   bindEvents() {
-    const toggle = $('#mobileMenuToggle');
-    if (toggle) {
-      toggle.addEventListener('click', (e) => {
+    const menuToggle = $('#mobileMenuToggle');
+    const dashboardToggle = $('#dashboardMenuToggle');
+
+    if (menuToggle) {
+      menuToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.toggle();
-        console.log('Mobile menu toggled');
       });
     }
 
-    // Close menu when clicking on links
+    if (dashboardToggle) {
+      dashboardToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDashboardSidebar();
+      });
+    }
+
     document.addEventListener('click', (e) => {
       const mobileLink = e.target.closest('.mobile-menu-link');
       if (mobileLink) {
         this.close();
       }
-    });
 
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
+      const sidebarLink = e.target.closest('.sidebar-link');
+      if (sidebarLink) {
+        this.closeDashboardSidebar();
+      }
+
       const menu = $('#mobileMenu');
-      const toggle = $('#mobileMenuToggle');
-      if (this.isOpen && menu && !menu.contains(e.target) && toggle && !toggle.contains(e.target)) {
+      const menuToggle = $('#mobileMenuToggle');
+      if (this.isOpen && menu && !menu.contains(e.target) && menuToggle && !menuToggle.contains(e.target)) {
         this.close();
       }
+
+      const sidebar = $('#dashboardSidebar');
+      const dashboardToggle = $('#dashboardMenuToggle');
+      if (this.isSidebarOpen && sidebar && !sidebar.contains(e.target) &&
+          dashboardToggle && !dashboardToggle.contains(e.target)) {
+        this.closeDashboardSidebar();
+      }
     });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+
+      this.close();
+      this.closeDashboardSidebar();
+
+      const userDropdown = $('#userDropdown');
+      if (userDropdown) userDropdown.classList.add('hidden');
+
+      if (window.NotificationManager) {
+        NotificationManager.hideNotifications();
+      }
+      if (window.AuthManager) {
+        AuthManager.hideLoginModal();
+        AuthManager.hideSignupModal();
+      }
+      if (window.UserManager) {
+        UserManager.hideAddUserModal();
+      }
+    });
+
+    window.addEventListener('resize', debounce(() => {
+      if (window.innerWidth > 1024) {
+        this.close();
+        this.closeDashboardSidebar();
+      } else {
+        this.syncSidebarA11y();
+      }
+    }, 150));
   },
 
   toggle() {
@@ -969,15 +1087,20 @@ const MobileMenu = {
     safeExecute(() => {
       const menu = $('#mobileMenu');
       const toggle = $('#mobileMenuToggle');
-      
+
+      this.closeDashboardSidebar();
+
       if (menu) {
         menu.classList.remove('hidden');
+        menu.setAttribute('aria-hidden', 'false');
         this.isOpen = true;
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('no-scroll');
       }
 
       if (toggle) {
         toggle.classList.add('active');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Close navigation menu');
       }
     }, 'Mobile menu open failed');
   },
@@ -986,17 +1109,81 @@ const MobileMenu = {
     safeExecute(() => {
       const menu = $('#mobileMenu');
       const toggle = $('#mobileMenuToggle');
-      
+
       if (menu) {
         menu.classList.add('hidden');
-        this.isOpen = false;
-        document.body.style.overflow = '';
+        menu.setAttribute('aria-hidden', 'true');
       }
+
+      this.isOpen = false;
+      document.body.classList.remove('no-scroll');
 
       if (toggle) {
         toggle.classList.remove('active');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open navigation menu');
       }
     }, 'Mobile menu close failed');
+  },
+
+  toggleDashboardSidebar() {
+    this.isSidebarOpen ? this.closeDashboardSidebar() : this.openDashboardSidebar();
+  },
+
+  openDashboardSidebar() {
+    safeExecute(() => {
+      this.close();
+
+      const sidebar = $('#dashboardSidebar');
+      const toggle = $('#dashboardMenuToggle');
+
+      if (sidebar) {
+        sidebar.classList.add('mobile-open');
+        this.isSidebarOpen = true;
+        document.body.classList.add('sidebar-open');
+      }
+
+      if (toggle) {
+        toggle.classList.add('active');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Close dashboard menu');
+      }
+
+      this.syncSidebarA11y();
+    }, 'Dashboard menu open failed');
+  },
+
+  closeDashboardSidebar() {
+    safeExecute(() => {
+      const sidebar = $('#dashboardSidebar');
+      const toggle = $('#dashboardMenuToggle');
+
+      if (sidebar) {
+        sidebar.classList.remove('mobile-open');
+      }
+
+      this.isSidebarOpen = false;
+      document.body.classList.remove('sidebar-open');
+
+      if (toggle) {
+        toggle.classList.remove('active');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open dashboard menu');
+      }
+
+      this.syncSidebarA11y();
+    }, 'Dashboard menu close failed');
+  },
+
+  syncSidebarA11y() {
+    const sidebar = $('#dashboardSidebar');
+    if (!sidebar) return;
+
+    const hiddenOnMobile = window.innerWidth <= 1024 && !this.isSidebarOpen;
+    sidebar.setAttribute('aria-hidden', hiddenOnMobile ? 'true' : 'false');
+    if ('inert' in sidebar) {
+      sidebar.inert = hiddenOnMobile;
+    }
   }
 };
 
@@ -1150,7 +1337,11 @@ const AuthManager = {
       if (modal) {
         modal.addEventListener('click', (e) => {
           if (e.target === modal || e.target.classList.contains('modal-backdrop')) {
-            modal.classList.add('hidden');
+            if (modal === loginModal) {
+              this.hideLoginModal();
+            } else {
+              this.hideSignupModal();
+            }
           }
         });
       }
@@ -1165,6 +1356,9 @@ const AuthManager = {
     if (userAvatar) {
       userAvatar.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.NotificationManager) {
+          NotificationManager.hideNotifications();
+        }
         if (userDropdown) {
           userDropdown.classList.toggle('hidden');
         }
@@ -1193,10 +1387,15 @@ const AuthManager = {
     safeExecute(() => {
       const modal = $('#loginModal');
       const form = $('#loginForm');
-      
+
+      if (window.MobileMenu) {
+        MobileMenu.close();
+        MobileMenu.closeDashboardSidebar();
+      }
+
       if (modal) {
         modal.classList.remove('hidden');
-        console.log('Login modal shown');
+        document.body.classList.add('no-scroll');
       }
       if (form) form.reset();
     }, 'Show login modal failed');
@@ -1206,6 +1405,9 @@ const AuthManager = {
     safeExecute(() => {
       const modal = $('#loginModal');
       if (modal) modal.classList.add('hidden');
+      if ($('#signupModal')?.classList.contains('hidden')) {
+        document.body.classList.remove('no-scroll');
+      }
     }, 'Hide login modal failed');
   },
 
@@ -1213,10 +1415,15 @@ const AuthManager = {
     safeExecute(() => {
       const modal = $('#signupModal');
       const form = $('#signupForm');
-      
+
+      if (window.MobileMenu) {
+        MobileMenu.close();
+        MobileMenu.closeDashboardSidebar();
+      }
+
       if (modal) {
-        modal.classList.remove('hidden');  
-        console.log('Signup modal shown');
+        modal.classList.remove('hidden');
+        document.body.classList.add('no-scroll');
       }
       if (form) form.reset();
     }, 'Show signup modal failed');
@@ -1226,6 +1433,9 @@ const AuthManager = {
     safeExecute(() => {
       const modal = $('#signupModal');
       if (modal) modal.classList.add('hidden');
+      if ($('#loginModal')?.classList.contains('hidden')) {
+        document.body.classList.remove('no-scroll');
+      }
     }, 'Hide signup modal failed');
   },
 
@@ -1431,11 +1641,12 @@ const AuthManager = {
   }
 };
 
-// Notification Management - Fixed
+// Notification Management
 const NotificationManager = {
   init() {
     safeExecute(() => {
       this.bindEvents();
+      this.updateCount();
       console.log('✓ Notification Manager initialized');
     }, 'Notification Manager initialization failed');
   },
@@ -1449,11 +1660,19 @@ const NotificationManager = {
       });
     }
 
-    // Close dropdown when clicking outside
+    const markAllReadBtn = $('#markAllReadBtn');
+    if (markAllReadBtn) {
+      markAllReadBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.markAllRead();
+      });
+    }
+
     document.addEventListener('click', (e) => {
       const notificationsDropdown = $('#notificationsDropdown');
-      if (notificationsDropdown && 
-          !notificationsDropdown.contains(e.target) && 
+      if (notificationsDropdown &&
+          !notificationsDropdown.contains(e.target) &&
           !notificationBell?.contains(e.target)) {
         this.hideNotifications();
       }
@@ -1463,8 +1682,19 @@ const NotificationManager = {
   toggleNotifications() {
     safeExecute(() => {
       const dropdown = $('#notificationsDropdown');
+      const notificationBell = $('#notificationBell');
+      const userDropdown = $('#userDropdown');
+
+      if (userDropdown) {
+        userDropdown.classList.add('hidden');
+      }
+
       if (dropdown) {
+        const isOpening = dropdown.classList.contains('hidden');
         dropdown.classList.toggle('hidden');
+        if (notificationBell) {
+          notificationBell.setAttribute('aria-expanded', isOpening ? 'true' : 'false');
+        }
       }
     }, 'Toggle notifications failed');
   },
@@ -1475,7 +1705,36 @@ const NotificationManager = {
       if (dropdown) {
         dropdown.classList.add('hidden');
       }
+      const notificationBell = $('#notificationBell');
+      if (notificationBell) {
+        notificationBell.setAttribute('aria-expanded', 'false');
+      }
     }, 'Hide notifications failed');
+  },
+
+  markAllRead() {
+    safeExecute(() => {
+      const items = $$('.notification-item');
+      items.forEach(item => item.classList.add('read'));
+
+      const count = $('#notificationCount');
+      if (count) {
+        count.textContent = '0';
+        count.classList.add('hidden');
+      }
+    }, 'Mark all notifications read failed');
+  },
+
+  updateCount() {
+    safeExecute(() => {
+      const count = $('#notificationCount');
+      const items = Array.from($$('.notification-item'));
+      if (!count) return;
+
+      const unread = items.filter(item => !item.classList.contains('read')).length;
+      count.textContent = String(unread);
+      count.classList.toggle('hidden', unread === 0);
+    });
   },
 
   showSuccess(message) {
@@ -1488,43 +1747,37 @@ const NotificationManager = {
 
   showNotification(message, type) {
     safeExecute(() => {
+      let stack = $('.toast-stack');
+      if (!stack) {
+        stack = document.createElement('div');
+        stack.className = 'toast-stack';
+        stack.setAttribute('aria-live', 'polite');
+        stack.setAttribute('aria-atomic', 'false');
+        document.body.appendChild(stack);
+      }
+
       const notification = document.createElement('div');
       notification.className = `notification notification--${type}`;
-      notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 16px 24px;
-        background: ${type === 'error' ? '#ef4444' : '#10b981'};
-        color: white;
-        border-radius: 8px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        z-index: 9999;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-        max-width: 400px;
-        font-weight: 500;
-        font-size: 14px;
-      `;
-      notification.textContent = message;
+      notification.setAttribute('role', type === 'error' ? 'alert' : 'status');
 
-      document.body.appendChild(notification);
+      const icon = document.createElement('span');
+      icon.className = 'notification-icon-badge';
+      icon.textContent = type === 'error' ? '⚠' : '✓';
+      icon.setAttribute('aria-hidden', 'true');
+
+      const text = document.createElement('span');
+      text.className = 'notification-text';
+      text.textContent = message;
+
+      notification.append(icon, text);
+      stack.appendChild(notification);
+
+      requestAnimationFrame(() => notification.classList.add('show'));
 
       setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(0)';
-      }, 100);
-
-      setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-          if (notification.parentElement) {
-            notification.remove();
-          }
-        }, 300);
-      }, 3000);
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 260);
+      }, 3200);
     }, 'Show notification failed');
   }
 };
@@ -1557,8 +1810,8 @@ const FormManager = {
       form.addEventListener('submit', (e) => this.handleSettingsUpdate(e));
     });
 
-    // Toggle switches
-    const toggleSwitches = $$('.toggle-switch');
+    // Toggle switches (the theme switch is owned by ThemeManager)
+    const toggleSwitches = $$('.toggle-switch:not(#settingsThemeToggle)');
     toggleSwitches.forEach(toggle => {
       toggle.addEventListener('click', (e) => this.handleToggle(e));
     });
@@ -1712,7 +1965,8 @@ class SaaStudioApp {
     try {
       // Initialize all modules with comprehensive error handling
       this.initializeModules();
-      
+      this.setCurrentYear();
+
       // Set app as initialized
       AppState.isInitialized = true;
       
@@ -1768,6 +2022,15 @@ class SaaStudioApp {
     window.NotificationManager = NotificationManager;
     window.FormManager = FormManager;
     window.PricingManager = PricingManager;
+    window.ChartManager = ChartManager;
+    window.Hero3D = Hero3D;
+  }
+
+  setCurrentYear() {
+    const year = $('#currentYear');
+    if (year) {
+      year.textContent = new Date().getFullYear();
+    }
   }
 
   // Public methods for debugging

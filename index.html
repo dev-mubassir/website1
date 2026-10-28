@@ -3,12 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaStudio - Transform Your Business with Our SaaS Solution</title>
-
+    <title>SaaStudio — The workspace for modern teams</title>
+    <meta name="description" content="SaaStudio is a modern, responsive SaaS marketing site and analytics dashboard built with vanilla HTML, CSS, and JavaScript.">
+    <meta name="theme-color" content="#070a13">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SaaStudio — The workspace for modern teams">
+    <meta property="og:description" content="Plan, measure, and grow in one beautiful workspace. Explore the SaaStudio demo site and dashboard.">
+    <meta property="og:url" content="https://github.com/dev-mubassir/website1">
     <!-- External fonts and libraries for the landing page and dashboard UI -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('saastudio_theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = saved || (prefersDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-color-scheme', theme);
+            } catch (error) {
+                document.documentElement.setAttribute('data-color-scheme', 'light');
+            }
+        })();
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,9 +36,10 @@
     <nav class="navbar marketing-nav">
         <div class="container">
             <div class="nav-content">
-                <div class="nav-brand">
-                    <h2>SaaStudio</h2>
-                </div>
+                <a href="#" class="nav-brand" data-page="home" aria-label="SaaStudio home">
+                    <span class="brand-mark">S</span>
+                    <span class="brand-name">SaaStudio</span>
+                </a>
                 
                 <div class="nav-links">
                     <a href="#" data-page="home" class="nav-link active">Home</a>
@@ -32,14 +50,14 @@
                 </div>
 
                 <div class="nav-actions">
-                    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle color theme" aria-pressed="false">
                         <span class="theme-icon">🌙</span>
                     </button>
                     <button type="button" class="btn btn--outline" id="loginBtn">Login</button>
                     <button type="button" class="btn btn--primary" id="signupBtn">Sign Up</button>
                 </div>
 
-                <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle">
+                <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open navigation menu" aria-controls="mobileMenu" aria-expanded="false">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -48,19 +66,26 @@
         </div>
     </nav>
 
-    <!-- Dashboard navigation displayed after sign-in to access account tools -->
+    <!-- Dashboard navigation displayed after sign-in -->
     <nav class="navbar dashboard-nav hidden">
         <div class="container">
             <div class="nav-content">
-                <div class="nav-brand">
-                    <h2>SaaStudio</h2>
-                </div>
+                <a href="#" class="nav-brand" data-page="dashboard" aria-label="SaaStudio dashboard">
+                    <span class="brand-mark">S</span>
+                    <span class="brand-name">SaaStudio</span>
+                </a>
+
+                <button type="button" class="mobile-menu-toggle dashboard-menu-toggle" id="dashboardMenuToggle" aria-label="Open dashboard menu" aria-controls="dashboardSidebar" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 
                 <div class="nav-user">
-                    <div class="notification-bell" id="notificationBell">
+                    <button type="button" class="notification-bell" id="notificationBell" aria-label="Open notifications" aria-expanded="false">
                         🔔
                         <span class="notification-count" id="notificationCount">3</span>
-                    </div>
+                    </button>
                     <div class="user-menu">
                         <div class="user-avatar" id="userAvatar">JD</div>
                         <div class="user-dropdown hidden" id="userDropdown">
@@ -78,34 +103,30 @@
         </div>
     </nav>
 
-    <!-- Dashboard sidebar navigation for the authenticated app pages -->
+    <!-- Dashboard sidebar navigation for authenticated app pages -->
     <aside class="dashboard-sidebar hidden" id="dashboardSidebar">
         <div class="sidebar-content">
             <nav class="sidebar-nav">
                 <a href="#" data-page="dashboard" class="sidebar-link active">
-                    <span class="sidebar-icon">📊</span>
+                    <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1.5"/><rect width="7" height="5" x="14" y="3" rx="1.5"/><rect width="7" height="9" x="14" y="12" rx="1.5"/><rect width="7" height="5" x="3" y="16" rx="1.5"/></svg></span>
                     <span class="sidebar-text">Dashboard</span>
                 </a>
                 <a href="#" data-page="analytics" class="sidebar-link">
-                    <span class="sidebar-icon">📈</span>
+                    <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
                     <span class="sidebar-text">Analytics</span>
                 </a>
                 <a href="#" data-page="users" class="sidebar-link">
-                    <span class="sidebar-icon">👥</span>
+                    <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
                     <span class="sidebar-text">Users</span>
                 </a>
-                <a href="#" data-page="settings" class="sidebar-link">
-                    <span class="sidebar-icon">⚙️</span>
-                    <span class="sidebar-text">Settings</span>
-                </a>
-                <a href="#" data-page="billing" class="sidebar-link">
-                    <span class="sidebar-icon">💳</span>
-                    <span class="sidebar-text">Billing</span>
-                </a>
-                <a href="#" data-page="reports" class="sidebar-link">
-                    <span class="sidebar-icon">📋</span>
-                    <span class="sidebar-text">Reports</span>
-                </a>
+                                <a href="#" data-page="settings" class="sidebar-link">
+                                    <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                                    <span class="sidebar-text">Settings</span>
+                                </a>
+                                <a href="#" data-page="pricing" class="sidebar-link">
+                                    <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></span>
+                                    <span class="sidebar-text">Plans &amp; billing</span>
+                                </a>
             </nav>
         </div>
     </aside>
@@ -125,18 +146,111 @@
         </div>
     </div>
 
-    <!-- Main content area that switches between marketing pages and dashboard pages -->
+    <!-- Main content area switches between marketing and dashboard pages -->
     <main class="main-content" id="mainContent">
         <!-- Public landing page: home -->
         <div class="page active" id="homePage">
-            <!-- Hero section with animated 3D background -->
+            <!-- Hero section with gradient background and product preview -->
             <section class="hero">
+                <div class="hero-aurora hero-aurora--one"></div>
+                <div class="hero-aurora hero-aurora--two"></div>
+                <div class="hero-grid" aria-hidden="true"></div>
                 <div class="hero-3d" id="hero3d"></div>
-                <div class="container">
+                <div class="container hero-inner">
                     <div class="hero-content">
-                        <h1 class="hero-title">Transform Your Business with Our SaaS Solution</h1>
-                        <p class="hero-subtitle">Streamline workflows, boost productivity, and scale effortlessly</p>
-                        <button type="button" class="btn btn--primary btn--lg hero-cta">Start Free Trial</button>
+                        <span class="hero-badge"><span class="badge-dot"></span> SaaStudio 2.0 is here</span>
+                        <h1 class="hero-title">Build momentum.<br><span class="gradient-text">Scale without limits.</span></h1>
+                        <p class="hero-subtitle">The all-in-one workspace for modern teams. Plan, measure, and grow with live insights, effortless collaboration, and enterprise-grade security.</p>
+                        <div class="hero-actions">
+                            <button type="button" class="btn btn--primary btn--lg hero-cta">Start free trial</button>
+                            <button type="button" class="btn btn--ghost btn--lg" data-page="pricing">Explore pricing</button>
+                        </div>
+                        <div class="hero-trust">
+                            <div class="avatar-stack" aria-hidden="true">
+                                <span class="stack-avatar stack-avatar--1">AL</span>
+                                <span class="stack-avatar stack-avatar--2">SK</span>
+                                <span class="stack-avatar stack-avatar--3">MJ</span>
+                                <span class="stack-avatar stack-avatar--4">+2k</span>
+                            </div>
+                            <div>
+                                <strong>2,600+ teams</strong>
+                                <span>already growing with SaaStudio</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual" aria-hidden="true">
+                        <div class="mock-window">
+                            <div class="mock-toolbar">
+                                <div class="mock-dots"><span></span><span></span><span></span></div>
+                                <span class="mock-url">app.saastudio.io/overview</span>
+                                <span class="mock-live"><span></span>Live</span>
+                            </div>
+                            <div class="mock-body">
+                                <aside class="mock-side">
+                                    <span class="mock-side-logo">S</span>
+                                    <span class="mock-side-item active"></span>
+                                    <span class="mock-side-item"></span>
+                                    <span class="mock-side-item"></span>
+                                    <span class="mock-side-item"></span>
+                                </aside>
+                                <div class="mock-main">
+                                    <div class="mock-heading">
+                                        <div>
+                                            <span class="mock-kicker">Overview</span>
+                                            <strong>Good morning, Alex</strong>
+                                        </div>
+                                        <span class="mock-pill">This month</span>
+                                    </div>
+                                    <div class="mock-stats">
+                                        <div class="mock-stat">
+                                            <span>Monthly revenue</span>
+                                            <strong>₹95,000</strong>
+                                            <em>+8.2%</em>
+                                        </div>
+                                        <div class="mock-stat">
+                                            <span>Active users</span>
+                                            <strong>2,650</strong>
+                                            <em>+12.5%</em>
+                                        </div>
+                                        <div class="mock-stat">
+                                            <span>Conversion</span>
+                                            <strong>3.2%</strong>
+                                            <em>+0.8%</em>
+                                        </div>
+                                    </div>
+                                    <div class="mock-chart">
+                                        <div class="mock-chart-head"><span>Revenue trend</span><span>Last 12 months</span></div>
+                                        <div class="mock-bars">
+                                            <span style="--h: 38%"></span>
+                                            <span style="--h: 52%"></span>
+                                            <span style="--h: 44%"></span>
+                                            <span style="--h: 66%"></span>
+                                            <span style="--h: 58%"></span>
+                                            <span style="--h: 74%"></span>
+                                            <span style="--h: 68%"></span>
+                                            <span style="--h: 84%"></span>
+                                            <span style="--h: 78%"></span>
+                                            <span style="--h: 92%"></span>
+                                            <span style="--h: 86%"></span>
+                                            <span style="--h: 100%"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="floating-card floating-card--one">
+                            <span class="floating-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+                            </span>
+                            <div><strong>3.2× faster</strong><span>team velocity</span></div>
+                        </div>
+                        <div class="floating-card floating-card--two">
+                            <span class="floating-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
+                            </span>
+                            <div><strong>SOC 2</strong><span>security ready</span></div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -144,37 +258,56 @@
             <!-- Core product features showcased on the homepage -->
             <section class="features">
                 <div class="container">
-                    <h2 class="section-title">Powerful Features for Modern Teams</h2>
+                    <div class="section-heading">
+                        <span class="eyebrow">Everything in one place</span>
+                        <h2 class="section-title">Powerful features for modern teams</h2>
+                        <p class="section-subtitle">Less tool switching. More momentum. SaaStudio brings your data, people, and workflows into one beautiful workspace.</p>
+                    </div>
                     <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">📊</div>
-                            <h3>Advanced Analytics</h3>
-                            <p>Get deep insights into your business performance with real-time analytics and reporting.</p>
+                        <div class="feature-card feature-card--wide">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-7"/><path d="M15 7h4v4"/></svg>
+                            </div>
+                            <h3>Advanced analytics</h3>
+                            <p>See what is working in real time. Build live dashboards, spot trends early, and make confident decisions with revenue, retention, and engagement data.</p>
+                            <div class="feature-sparkline" aria-hidden="true">
+                                <span style="--h: 32%"></span><span style="--h: 48%"></span><span style="--h: 40%"></span><span style="--h: 62%"></span><span style="--h: 55%"></span><span style="--h: 76%"></span><span style="--h: 88%"></span>
+                            </div>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">👥</div>
-                            <h3>Team Collaboration</h3>
-                            <p>Work seamlessly with your team using our built-in collaboration tools.</p>
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <h3>Team collaboration</h3>
+                            <p>Keep everyone aligned with shared views, comments, and instant updates.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">🔗</div>
-                            <h3>API Integration</h3>
-                            <p>Connect with your favorite tools and services through our robust API.</p>
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                            </div>
+                            <h3>API integration</h3>
+                            <p>Connect your stack in minutes with a clean REST API and webhooks.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">📱</div>
-                            <h3>Mobile Access</h3>
-                            <p>Stay productive on the go with our native mobile applications.</p>
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+                            </div>
+                            <h3>Mobile access</h3>
+                            <p>Stay productive anywhere with a fast, responsive experience on every device.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">🔒</div>
-                            <h3>Security First</h3>
-                            <p>Enterprise-grade security with SOC 2 compliance and data encryption.</p>
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                            </div>
+                            <h3>Security first</h3>
+                            <p>Enterprise-grade protection with encryption, SSO, and SOC 2 compliance.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">🎧</div>
-                            <h3>24/7 Support</h3>
-                            <p>Get help when you need it with our round-the-clock customer support.</p>
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Z"/><path d="M21 14h-3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-5Z"/><path d="M6 10V8a6 6 0 0 1 12 0v2"/></svg>
+                            </div>
+                            <h3>24/7 support</h3>
+                            <p>Real people, real answers. Our team is here whenever you need us.</p>
                         </div>
                     </div>
                 </div>
@@ -198,13 +331,17 @@
             <!-- Customer testimonials shown on the product landing page -->
             <section class="customer-reviews">
                 <div class="container">
-                    <h2 class="section-title">What our customers say</h2>
+                    <div class="section-heading">
+                        <span class="eyebrow">Loved by teams</span>
+                        <h2 class="section-title">What our customers say</h2>
+                        <p class="section-subtitle">Thousands of teams use SaaStudio to turn busywork into their best work.</p>
+                    </div>
                     <div class="reviews-grid">
                         <div class="review-card">
-                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <div class="review-rating">★★★★★</div>
                             <p class="review-text">"Amazing platform that transformed our workflow!"</p>
                             <div class="review-author">
-                                <div class="author-avatar">👨‍💻</div>
+                                <div class="author-avatar">DW</div>
                                 <div class="author-info">
                                     <div class="author-name">David Wilson</div>
                                     <div class="author-company">Tech Startup</div>
@@ -212,10 +349,10 @@
                             </div>
                         </div>
                         <div class="review-card">
-                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <div class="review-rating">★★★★★</div>
                             <p class="review-text">"Intuitive interface and excellent customer support."</p>
                             <div class="review-author">
-                                <div class="author-avatar">👩‍💼</div>
+                                <div class="author-avatar">LT</div>
                                 <div class="author-info">
                                     <div class="author-name">Lisa Thompson</div>
                                     <div class="author-company">Marketing Agency</div>
@@ -223,15 +360,32 @@
                             </div>
                         </div>
                         <div class="review-card">
-                            <div class="review-rating">⭐⭐⭐⭐</div>
+                            <div class="review-rating">★★★★☆</div>
                             <p class="review-text">"The analytics features are incredibly detailed and useful."</p>
                             <div class="review-author">
-                                <div class="author-avatar">👨‍💼</div>
+                                <div class="author-avatar">JP</div>
                                 <div class="author-info">
                                     <div class="author-name">James Park</div>
                                     <div class="author-company">E-commerce</div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Closing call to action for the landing page -->
+            <section class="cta-section">
+                <div class="container">
+                    <div class="cta-card">
+                        <div class="cta-orb cta-orb--one"></div>
+                        <div class="cta-orb cta-orb--two"></div>
+                        <span class="eyebrow eyebrow--light">Ready when you are</span>
+                        <h2>Ship your next big idea with SaaStudio</h2>
+                        <p>Start your 14-day free trial. No credit card required.</p>
+                        <div class="hero-actions">
+                            <button type="button" class="btn btn--primary btn--lg hero-cta">Start free trial</button>
+                            <button type="button" class="btn btn--ghost btn--lg" data-page="contact">Talk to sales</button>
                         </div>
                     </div>
                 </div>
@@ -252,7 +406,7 @@
                     <!-- KPI cards summarize core product performance -->
                     <div class="kpi-grid">
                         <div class="kpi-card">
-                            <div class="kpi-icon">👥</div>
+                            <div class="kpi-icon kpi-icon--violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
                             <div class="kpi-content">
                                 <h3 class="kpi-value" id="kpiUsers">2,650</h3>
                                 <p class="kpi-label">Total Users</p>
@@ -263,7 +417,7 @@
                             </div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-icon">💰</div>
+                            <div class="kpi-icon kpi-icon--cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
                             <div class="kpi-content">
                                 <h3 class="kpi-value" id="kpiRevenue">₹95,000</h3>
                                 <p class="kpi-label">Monthly Revenue</p>
@@ -274,7 +428,7 @@
                             </div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-icon">📈</div>
+                            <div class="kpi-icon kpi-icon--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-7"/><path d="M15 7h4v4"/></svg></div>
                             <div class="kpi-content">
                                 <h3 class="kpi-value" id="kpiConversion">3.2%</h3>
                                 <p class="kpi-label">Conversion Rate</p>
@@ -285,7 +439,7 @@
                             </div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-icon">📉</div>
+                            <div class="kpi-icon kpi-icon--rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
                             <div class="kpi-content">
                                 <h3 class="kpi-value" id="kpiChurn">2.1%</h3>
                                 <p class="kpi-label">Churn Rate</p>
@@ -359,7 +513,7 @@
                             <h3>Quick Actions</h3>
                             <div class="action-buttons">
                                 <button type="button" class="btn btn--primary btn--full-width" data-page="users">Add New User</button>
-                                <button type="button" class="btn btn--outline btn--full-width" data-page="reports">Generate Report</button>
+                                <button type="button" class="btn btn--outline btn--full-width" data-page="analytics">View Reports</button>
                                 <button type="button" class="btn btn--outline btn--full-width" data-page="settings">Update Settings</button>
                             </div>
                         </div>
@@ -565,10 +719,10 @@
                                 </div>
                             </div>
                             <div class="plan-features">
-                                <div class="feature-item">✓ Up to 5 users</div>
-                                <div class="feature-item">✓ 10GB storage</div>
-                                <div class="feature-item">✓ Email support</div>
-                                <div class="feature-item">✓ Basic analytics</div>
+                                <div class="feature-item">Up to 5 users</div>
+                                <div class="feature-item">10GB storage</div>
+                                <div class="feature-item">Email support</div>
+                                <div class="feature-item">Basic analytics</div>
                             </div>
                             <button type="button" class="btn btn--outline btn--full-width plan-btn">Choose Basic</button>
                         </div>
@@ -585,11 +739,11 @@
                                 </div>
                             </div>
                             <div class="plan-features">
-                                <div class="feature-item">✓ Up to 25 users</div>
-                                <div class="feature-item">✓ 100GB storage</div>
-                                <div class="feature-item">✓ Priority support</div>
-                                <div class="feature-item">✓ Advanced analytics</div>
-                                <div class="feature-item">✓ Custom reports</div>
+                                <div class="feature-item">Up to 25 users</div>
+                                <div class="feature-item">100GB storage</div>
+                                <div class="feature-item">Priority support</div>
+                                <div class="feature-item">Advanced analytics</div>
+                                <div class="feature-item">Custom reports</div>
                             </div>
                             <button type="button" class="btn btn--primary btn--full-width plan-btn">Choose Pro</button>
                         </div>
@@ -605,12 +759,12 @@
                                 </div>
                             </div>
                             <div class="plan-features">
-                                <div class="feature-item">✓ Unlimited users</div>
-                                <div class="feature-item">✓ 1TB storage</div>
-                                <div class="feature-item">✓ 24/7 phone support</div>
-                                <div class="feature-item">✓ Advanced analytics</div>
-                                <div class="feature-item">✓ Custom integrations</div>
-                                <div class="feature-item">✓ Dedicated manager</div>
+                                <div class="feature-item">Unlimited users</div>
+                                <div class="feature-item">1TB storage</div>
+                                <div class="feature-item">24/7 phone support</div>
+                                <div class="feature-item">Advanced analytics</div>
+                                <div class="feature-item">Custom integrations</div>
+                                <div class="feature-item">Dedicated manager</div>
                             </div>
                             <button type="button" class="btn btn--outline btn--full-width plan-btn">Choose Enterprise</button>
                         </div>
@@ -619,59 +773,122 @@
             </section>
         </div>
 
-        <!-- About us section with mission and leadership team -->
+        <!-- About page with mission, values, team, and builder profile -->
         <div class="page hidden" id="aboutPage">
             <section class="about-hero">
-                <div class="container">
-                    <h1 class="page-title">About SaaStudio</h1>
-                    <p class="page-subtitle">We're on a mission to transform how businesses operate</p>
+                <div class="container about-hero-inner">
+                    <div class="about-hero-copy">
+                        <span class="eyebrow">About SaaStudio</span>
+                        <h1 class="page-title">Software that feels like a <span class="gradient-text">superpower.</span></h1>
+                        <p class="page-subtitle">SaaStudio started with a simple belief: modern teams deserve tools that are powerful, beautiful, and effortless. We build the calm, focused workspace we always wanted.</p>
+                        <div class="about-stats">
+                            <div><strong>2,600+</strong><span>teams onboard</span></div>
+                            <div><strong>99.99%</strong><span>uptime</span></div>
+                            <div><strong>40+</strong><span>countries</span></div>
+                        </div>
+                    </div>
+                    <div class="about-visual" aria-hidden="true">
+                        <div class="about-orbit about-orbit--one"></div>
+                        <div class="about-orbit about-orbit--two"></div>
+                        <div class="about-core">
+                            <span class="brand-mark brand-mark--xl">S</span>
+                            <strong>Built for flow</strong>
+                            <span>One workspace. Zero friction.</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <section class="about-content">
                 <div class="container">
-                    <div class="about-text">
-                        <h2>Our Mission</h2>
-                        <p>At SaaStudio, we believe that every business deserves access to powerful, intuitive tools that drive growth and efficiency. Our mission is to democratize enterprise-grade software to help modern companies compete and scale with confidence.</p>
-                        
-                        <h2>Our Team</h2>
-                        <div class="team-grid">
-                            <div class="team-card">
-                                <div class="team-avatar">👨‍💼</div>
-                                <h3 class="team-name">Alex Johnson</h3>
-                                <p class="team-role">CEO & Founder</p>
-                                <p class="team-bio">Visionary leader with 15+ years in SaaS</p>
-                            </div>
-                            <div class="team-card">
-                                <div class="team-avatar">👩‍💻</div>
-                                <h3 class="team-name">Sarah Chen</h3>
-                                <p class="team-role">CTO</p>
-                                <p class="team-bio">Tech expert specializing in scalable architectures</p>
-                            </div>
-                            <div class="team-card">
-                                <div class="team-avatar">👨‍🎨</div>
-                                <h3 class="team-name">Mike Rodriguez</h3>
-                                <p class="team-role">Head of Design</p>
-                                <p class="team-bio">UX/UI designer focused on user-centered design</p>
-                            </div>
-                            <div class="team-card">
-                                <div class="team-avatar">👩‍💼</div>
-                                <h3 class="team-name">Emily Davis</h3>
-                                <p class="team-role">VP of Sales</p>
-                                <p class="team-bio">Sales strategist driving growth and partnerships</p>
-                            </div>
+                    <div class="section-heading">
+                        <span class="eyebrow">What we believe</span>
+                        <h2 class="section-title">Good software should get out of the way</h2>
+                        <p class="section-subtitle">We sweat the details so your team can focus on the work that matters.</p>
+                    </div>
+
+                    <div class="values-grid">
+                        <article class="value-card">
+                            <span class="value-number">01</span>
+                            <h3>Clarity over complexity</h3>
+                            <p>Every screen, flow, and interaction is designed to make the next step obvious.</p>
+                        </article>
+                        <article class="value-card">
+                            <span class="value-number">02</span>
+                            <h3>Speed with substance</h3>
+                            <p>Fast software is table stakes. We pair performance with data you can trust.</p>
+                        </article>
+                        <article class="value-card">
+                            <span class="value-number">03</span>
+                            <h3>Humans first</h3>
+                            <p>Real support, thoughtful defaults, and accessibility built into everything we ship.</p>
+                        </article>
+                    </div>
+
+                    <div class="about-mission">
+                        <div class="about-mission-copy">
+                            <span class="eyebrow">Our mission</span>
+                            <h2>Democratize the tools that help teams grow</h2>
+                            <p>At SaaStudio, we believe every business deserves access to powerful, intuitive software. We are building a platform that turns enterprise-grade capabilities into everyday essentials, so modern companies can compete and scale with confidence.</p>
                         </div>
+                        <div class="mission-points">
+                            <div><span>01</span><p>Real-time insight without the spreadsheet gymnastics.</p></div>
+                            <div><span>02</span><p>Collaboration that feels natural, not layered on.</p></div>
+                            <div><span>03</span><p>Security and performance at every plan tier.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="section-heading section-heading--team">
+                        <span class="eyebrow">The team</span>
+                        <h2 class="section-title">Small team. Big ambition.</h2>
+                    </div>
+                    <div class="team-grid">
+                        <div class="team-card">
+                            <div class="team-avatar">AJ</div>
+                            <h3 class="team-name">Alex Johnson</h3>
+                            <p class="team-role">CEO & Founder</p>
+                            <p class="team-bio">Visionary leader with 15+ years in SaaS</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar">SC</div>
+                            <h3 class="team-name">Sarah Chen</h3>
+                            <p class="team-role">CTO</p>
+                            <p class="team-bio">Tech expert specializing in scalable architectures</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar">MR</div>
+                            <h3 class="team-name">Mike Rodriguez</h3>
+                            <p class="team-role">Head of Design</p>
+                            <p class="team-bio">UX/UI designer focused on user-centered design</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar">ED</div>
+                            <h3 class="team-name">Emily Davis</h3>
+                            <p class="team-role">VP of Sales</p>
+                            <p class="team-bio">Sales strategist driving growth and partnerships</p>
+                        </div>
+                    </div>
+
+                    <div class="builder-card">
+                        <div class="builder-avatar">M</div>
+                        <div class="builder-copy">
+                            <span class="eyebrow">Meet the builder</span>
+                            <h2>Built by Mubassar</h2>
+                            <p>I am Mubassar, a passionate web developer who loves turning ideas into interactive experiences. I focus on clean, responsive, accessible interfaces and enjoy sharing what I learn through open-source projects.</p>
+                        </div>
+                        <a class="btn btn--outline" href="https://github.com/dev-mubassir" target="_blank" rel="noopener noreferrer">View GitHub</a>
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- Customer review page -->
+        <!-- Reviews Page -->
         <div class="page hidden" id="reviewsPage">
             <section class="reviews-hero">
                 <div class="container">
-                    <h1 class="page-title">Customer Reviews</h1>
-                    <p class="page-subtitle">See what our customers are saying about SaaStudio</p>
+                    <span class="eyebrow">Customer stories</span>
+                    <h1 class="page-title">Teams move faster with SaaStudio</h1>
+                    <p class="page-subtitle">See why founders, marketers, and product teams choose SaaStudio every day.</p>
                 </div>
             </section>
 
@@ -679,10 +896,10 @@
                 <div class="container">
                     <div class="reviews-grid">
                         <div class="review-card">
-                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <div class="review-rating">★★★★★</div>
                             <p class="review-text">"Game-changer for our startup. The ease of use and powerful features helped us scale quickly."</p>
                             <div class="review-author">
-                                <div class="author-avatar">👨‍💻</div>
+                                <div class="author-avatar">DW</div>
                                 <div class="author-info">
                                     <div class="author-name">David Wilson</div>
                                     <div class="author-company">Tech Startup</div>
@@ -690,10 +907,10 @@
                             </div>
                         </div>
                         <div class="review-card">
-                            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                            <div class="review-rating">★★★★★</div>
                             <p class="review-text">"Intuitive interface and excellent customer support. Our team loves using it."</p>
                             <div class="review-author">
-                                <div class="author-avatar">👩‍💼</div>
+                                <div class="author-avatar">LT</div>
                                 <div class="author-info">
                                     <div class="author-name">Lisa Thompson</div>
                                     <div class="author-company">Marketing Agency</div>
@@ -701,10 +918,10 @@
                             </div>
                         </div>
                         <div class="review-card">
-                            <div class="review-rating">⭐⭐⭐⭐</div>
+                            <div class="review-rating">★★★★☆</div>
                             <p class="review-text">"The analytics features are incredibly detailed and useful for decision making."</p>
                             <div class="review-author">
-                                <div class="author-avatar">👨‍💼</div>
+                                <div class="author-avatar">JP</div>
                                 <div class="author-info">
                                     <div class="author-name">James Park</div>
                                     <div class="author-company">E-commerce</div>
@@ -720,8 +937,9 @@
         <div class="page hidden" id="contactPage">
             <section class="contact-hero">
                 <div class="container">
-                    <h1 class="page-title">Contact Us</h1>
-                    <p class="page-subtitle">Get in touch with our team</p>
+                    <span class="eyebrow">Contact</span>
+                    <h1 class="page-title">Let's build something great</h1>
+                    <p class="page-subtitle">Questions, ideas, or a project in mind? Our team would love to hear from you.</p>
                 </div>
             </section>
 
@@ -755,21 +973,21 @@
                             <h2>Get in touch</h2>
                             <div class="contact-info">
                                 <div class="contact-item">
-                                    <div class="contact-icon">📧</div>
+                                    <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
                                     <div class="contact-details">
                                         <h4>Email</h4>
                                         <p>support@saastudio.com</p>
                                     </div>
                                 </div>
                                 <div class="contact-item">
-                                    <div class="contact-icon">📞</div>
+                                    <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg></div>
                                     <div class="contact-details">
                                         <h4>Phone</h4>
                                         <p>+91 98765 43210</p>
                                     </div>
                                 </div>
                                 <div class="contact-item">
-                                    <div class="contact-icon">📍</div>
+                                    <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
                                     <div class="contact-details">
                                         <h4>Office</h4>
                                         <p>123 Tech Park, Bangalore, India</p>
@@ -782,7 +1000,7 @@
             </section>
         </div>
 
-        <!-- Login modal for returning users -->
+        <!-- Login Modal -->
         <div class="modal hidden" id="loginModal">
             <div class="modal-backdrop">
                 <div class="modal-content">
@@ -814,7 +1032,7 @@
             </div>
         </div>
 
-        <!-- Signup modal for creating a new account -->
+        <!-- Signup Modal -->
         <div class="modal hidden" id="signupModal">
             <div class="modal-backdrop">
                 <div class="modal-content">
@@ -857,7 +1075,7 @@
             </div>
         </div>
 
-        <!-- Modal for adding a new user from the dashboard -->
+        <!-- Add User Modal -->
         <div class="modal hidden" id="addUserModal">
             <div class="modal-backdrop">
                 <div class="modal-content">
@@ -896,11 +1114,11 @@
             </div>
         </div>
 
-        <!-- Notification center for account updates -->
+        <!-- Notifications Dropdown -->
         <div class="notifications-dropdown hidden" id="notificationsDropdown">
             <div class="notifications-header">
                 <h3>Notifications</h3>
-                <button type="button" class="btn btn--sm btn--outline">Mark all read</button>
+                <button type="button" class="btn btn--sm btn--outline" id="markAllReadBtn">Mark all read</button>
             </div>
             <div class="notifications-list" id="notificationsList">
                 <div class="notification-item">
@@ -933,8 +1151,8 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>SaaStudio</h3>
-                    <p>Transform your business with our powerful SaaS solution.</p>
+                    <h3 class="footer-brand"><span class="brand-mark brand-mark--sm">S</span> SaaStudio</h3>
+                    <p>The all-in-one workspace for modern teams. Plan, measure, and grow in one calm, focused place.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Product</h4>
@@ -960,7 +1178,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 SaaStudio. All rights reserved.</p>
+                <p>&copy; <span id="currentYear">2026</span> SaaStudio. All rights reserved.</p>
                 <div class="social-links">
                     <a href="#" target="_blank">Twitter</a>
                     <a href="#" target="_blank">LinkedIn</a>
